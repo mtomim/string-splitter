@@ -7,36 +7,48 @@ import lombok.AllArgsConstructor;
 
 enum CharArrayStrategy {
     SURROGATE_PAIR(
-        arg -> arg.i < arg.array.length - 1
-                && Character.isSurrogatePair(arg.array[arg.i], arg.array[arg.i + 1]),
-        arg -> new String(new char[] { arg.array[arg.i], arg.array[++arg.i] })
-    ),
+            arg -> arg.i < arg.array.length - 1
+                    && Character.isSurrogatePair(arg.current(), arg.next()),
+            arg -> new String(new char[] { arg.current(), arg.incrementAndNext()})),
     DEFAULT(
-        arg -> true,
-        arg -> Character.toString(arg.array[arg.i])
-    );
+            arg -> true,
+            arg -> Character.toString(arg.current()));
 
     @AllArgsConstructor
-    public static class Args {
+    public static class Arg {
         int i;
         char[] array;
-    }
-        private final Predicate<CharArrayStrategy.Args> predicate;
-    private final Function<CharArrayStrategy.Args, String> work;
 
-    CharArrayStrategy(Predicate<CharArrayStrategy.Args> predicate, Function<CharArrayStrategy.Args, String> work) {
+        char current() {
+            return this.array[this.i];
+        }
+
+        char next() {
+            return this.array[this.i + 1];
+        }
+
+        char incrementAndNext() {
+            this.i++;
+            return current();
+        }
+    }
+
+    private final Predicate<Arg> predicate;
+    private final Function<Arg, String> work;
+
+    CharArrayStrategy(Predicate<Arg> predicate, Function<Arg, String> work) {
         this.predicate = predicate;
         this.work = work;
     }
 
-    static CharArrayStrategy of(final CharArrayStrategy.Args arg) {
+    static CharArrayStrategy of(final Arg arg) {
         if (SURROGATE_PAIR.predicate.test(arg)) {
             return SURROGATE_PAIR;
         }
         return DEFAULT;
     }
 
-    String doWork(CharArrayStrategy.Args arg) {
+    String doWork(Arg arg) {
         return this.work.apply(arg);
     }
 }

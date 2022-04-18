@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import com.mt.sandbox.utils.CharArrayStrategy.Args;
+import com.mt.sandbox.utils.CharArrayStrategy.Arg;
 
 public class StringSplitter {
 
@@ -22,7 +22,7 @@ public class StringSplitter {
             return Collections.emptyList();
         }
         List<String> strings = new ArrayList<>();
-        for (Args arg = new Args(0, str.toCharArray()); arg.i < str.toCharArray().length; arg.i++) {
+        for (Arg arg = new Arg(0, str.toCharArray()); arg.i < str.toCharArray().length; arg.i++) {
             strings.add(CharArrayStrategy.of(arg).doWork(arg));
         }
         return strings;

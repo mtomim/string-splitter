@@ -20,11 +20,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MeasurePerformance {
 
-    private static final List<RefWrapper> REF_LIST = Arrays.asList(
-        new RefWrapper(StringSplitter::toCharacterStringListWithCodePoints, "codePoints"),
-        new RefWrapper(StringSplitter::toCharacterStringListWithIfBlock, "classic"),
-        new RefWrapper(StringSplitter::toCharacterStringListWithRegex, "regex")
-        // new RefWrapper(StringSplitter::toCharacterStringListWithStrategy, "strategy")
+    private static final List<MethodReferenceWrapper> REF_LIST = Arrays.asList(
+        new MethodReferenceWrapper(StringSplitter::toCharacterStringListWithCodePoints, "codePoints"),
+        new MethodReferenceWrapper(StringSplitter::toCharacterStringListWithIfBlock, "classic"),
+        new MethodReferenceWrapper(StringSplitter::toCharacterStringListWithRegex, "regex")
+        // new RefWrapper(StringSplitter::toCharacterStringListWithStrategy, "strategy") // uncomment this if very slow execution is acceptable
     );
 
     static final String ASCII = "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ;:=-_,.1234567890";
@@ -38,21 +38,25 @@ public class MeasurePerformance {
         } catch (IOException e) {
             throw new IllegalStateException(e);
         } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    System.exit(1);
-                }
+            closeSilentlyOrExit(is);
+        }
+    }
+
+    private static void closeSilentlyOrExit(InputStream is) {
+        if (is != null) {
+            try {
+                is.close();
+            } catch (IOException e) {
+                System.exit(1);
             }
         }
     }
 
-    static class RefWrapper {
+    static class MethodReferenceWrapper {
         final Function<String, List<String>> function;
         final String name;
 
-        RefWrapper(Function<String, List<String>> function, String name) {
+        MethodReferenceWrapper(Function<String, List<String>> function, String name) {
             this.function = function;
             this.name = name;
         }
@@ -68,7 +72,7 @@ public class MeasurePerformance {
             int step = max / 100;
             List<String> testData = prepareTestData(max, step);
             Map<String, Long> measureMap = new HashMap<>();
-            for (RefWrapper methodRef : REF_LIST) {
+            for (MethodReferenceWrapper methodRef : REF_LIST) {
                 if (methodNames.size() < REF_LIST.size()) {
                     methodNames.add(methodRef.name);
                 }
