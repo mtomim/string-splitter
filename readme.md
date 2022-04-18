@@ -13,14 +13,16 @@ class is not.
 There are 4 implementations:
 - **String.codePoints()** (`IntStream`, `Character.toString(int)`) -- leveraging Java 9's `String#codePoints()` and Java 11's `Character.toString(int)` takinig the *codePoint* and Stream API. Fastest. The code is the **simplest** and easily understandable, too.
 
-        public static List<String> toCharacterStringListWithCodePoints(String str) {
-            if (str == null) {
-                return Collections.emptyList();
-            }
-            return str.codePoints()
-                .mapToObj(Character::toString)
-                .collect(Collectors.toList());
-        }
+```java
+public static List<String> toCharacterStringListWithCodePoints(String str) {
+    if (str == null) {
+        return Collections.emptyList();
+    }
+    return str.codePoints()
+        .mapToObj(Character::toString)
+        .collect(Collectors.toList());
+}
+```
 
 - classical -- iterate on character array examining if current + next are surrogate pair, in which case create one string with these two `char`'s. If not, the current character becomes one string.
 - regex (`"(?<=.)"`) -- This magical regex pattern can be used to our purpose. Slower than the above 2.
