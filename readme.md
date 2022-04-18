@@ -11,7 +11,7 @@ These implementations are extensively tested, however the performance tester
 class is not.
 
 There are 4 implementations:
-- **String.codePoints()** (`IntStream`, `Character.toString(int)`) -- leveraging Java 9's `String#codePoints()` and Java 11's `Character.toString(int)` takinig the *codePoint* and Stream API. Fastest. The code is the **simplest** and easily understandable, too.
+- **String.codePoints()** (`IntStream`, `Character.toString(int)`) -- leveraging Java 9's `String#codePoints()` producing an `IntStream` and Java 11's `Character.toString(int)` taking the *codePoint*. Fastest. The code is the **simplest** and easily understandable, too.
 
 ```java
 public static List<String> toCharacterStringListWithCodePoints(String str) {
